@@ -1,12 +1,8 @@
-
-documents=[]
-index={}
-
-
 ### Q.3 (ii) 1.
 
 documents=[]
-pos_index={}
+pos_index=[{},{}]
+zero = 0
 
 
 for i in range (1,10):
@@ -31,18 +27,13 @@ for i in range (1,10):
 for p in range(0,len(documents)):
     docID = p
     doc_tok = documents[p]
-    for q in range(0,len(doc_tok)): ## Iterate through each word
+    for q in range(zero,len(doc_tok)): ## Iterate through each word
         instance = q
         word = doc_tok[q]
-        if word not in pos_index:  ##if word not in Index, create a new instance
-            pos_index[word] = {"Total count": 0, "documents list": {}}
-        if docID not in pos_index[word]["documents list"]:
-            pos_index[word]["documents list"][docID] = []
-        pos_index[word]["Total count"] += 1
-        pos_index[word]["documents list"][docID].append(instance)
-print(pos_index)
-
-
-
-
-
+        if word not in pos_index[zero]:  ##if word not in Index, create a new instance
+            pos_index[zero][word] = {"Total count": 0, "documents list": {}}
+        if docID not in pos_index[zero][word]["documents list"]:
+            pos_index[zero][word]["documents list"][docID] = []
+        pos_index[zero][word]["Total count"] += 1
+        pos_index[zero][word]["documents list"][docID].append(instance)
+print(pos_index[zero])
