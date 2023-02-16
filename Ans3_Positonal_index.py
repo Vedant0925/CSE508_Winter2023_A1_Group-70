@@ -29,6 +29,7 @@ for i in range (1,10):
 for p in range(0,len(documents)):
     docID = p
     doc_tok = documents[p]
+    docID = docID+1
     for q in range(zero,len(doc_tok)): ## Iterate through each word
         instance = q
         word = doc_tok[q]
