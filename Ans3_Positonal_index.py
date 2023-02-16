@@ -5,34 +5,30 @@
 documents=[]
 pos_index=[{},{}]
 zero = 0
+import os
+folder_path = "CSE508_Winter2023_Dataset"
 
 
-for i in range (1,10):
-    if (i <10):
-        url2 = "CSE508_Winter2023_Dataset\cranfield000"+str(i)
-    elif (i<100):
-        url2= "CSE508_Winter2023_Dataset\cranfield00"+str(i)
-    elif (i<1000):
-        url2 = "CSE508_Winter2023_Dataset\cranfield0"+str(i)
-    elif (i<10000):
-        url2 = "CSE508_Winter2023_Dataset\cranfield"+str(i)
+for root, _, files in os.walk(folder_path):
+    for file in files:
+            with open(os.path.join(root, file), 'r') as f:
+                doc_id = file
+                content = f.read().strip().split()
+                
+                documents.append(content)
 
-    f = open(url2, "r")
-    text =  f.read()
-    f.close
-
-    tokens = text.split()
-    documents.append(tokens)
-
+    
 
 # Iterate through each document
 for p in range(0,len(documents)):
     docID = p
     doc_tok = documents[p]
     docID = docID+1
+
     for q in range(zero,len(doc_tok)): ## Iterate through each word
         instance = q
         word = doc_tok[q]
+
         if word not in pos_index[zero]:  ##if word not in Index, create a new instance
             pos_index[zero][word] = {"Total count": 0, "documents list": {}}
         if docID not in pos_index[zero][word]["documents list"]:
@@ -49,20 +45,20 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import string
+import numpy as np
 
 
+### Saving and loading index
 
-
-with open('PosInd\inverted_index.pkl', 'wb') as f:
+with open('PosInd\Positional_index.pkl', 'wb') as f:
     pickle.dump(pos_index, f)
 
 # Load the inverted index from the file
-with open('PosInd\inverted_index.pkl', 'rb') as f:
+with open('PosInd\Positional_index.pkl', 'rb') as f:
     loaded_index = pickle.load(f)
 
-# Print the loaded index to verify it matches the original index
-# print(loaded_index)
 
+## PreProcessing the text in the query to match the data stored in index
 def pre_process(text):
    
     text = text.lower()
@@ -76,24 +72,29 @@ def pre_process(text):
         processed=processed+" "+i
     return processed
 
-def find_query(query):
-    # index=load_index("indexfile")
-    tok = query.split()
-    ret = [] ##doclist
-    count =0
-    docIds=[]
+def find_query(query): 
+    words = query.split()
     uniqueDocIds = []
-    for b in tok:
-        if b in loaded_index:
-            ret.append(loaded_index[b]['documents list'])
-            # count = count+ len(loaded_index[b]['documents list'] )
-            # docId.append(list(loaded_index[b]['documents list'].keys()))
-            docIds = docIds + list(loaded_index[b]['documents list'].keys())
-            uniqueDocIds = [ x for i, x in enumerate(docIds) if x not in docIds[:i]]
-            count = len(uniqueDocIds)
-    return count ,uniqueDocIds
+    doc_list=[]
+    
+    doc_list = []
+    for i in range(len(query.split()) - 1): ## taking the combinations of the phrase as 2 words
+        word1 = query.split()[i]
+        word2 = query.split()[i+1]
+        if word1 in loaded_index and word2 in loaded_index:  ## checking if both words in index 
+            for docID in loaded_index[word1]["documents list"]:
+                if docID in loaded_index[word2]["documents list"]: ## Checking if both words are present in same document 
+                    for instance1 in loaded_index[word1]["documents list"][docID]:
+                        for instance2 in loaded_index[word2]["documents list"][docID]: ## taking the instance of the words
+                            if instance2 == instance1 + 1: ## Checking if both words are consecutive and together or not
+                                doc_list.append(docID) 
+    doc_list = np.unique(doc_list)
+    doc_list =doc_list
+                                
+    return doc_list
 
-print("Enter Number of Queries Followed By Queries")
+
+print("Enter Number of Queries Followed By Queries")   ##Taking the query input 
 a = int(input())
 queries=[]
 for i in range(a):
@@ -103,11 +104,10 @@ i = 0
 for j in queries:
     i=i+1
     processed_q=pre_process(j)
-    count , list=find_query(processed_q)
-    # print(result)
-    print("Number of Documents Retrived for Query "+str(i)+": "+str(count))
+    list=find_query(processed_q)
+    print("Number of Documents Retrived for Query "+str(i)+": "+str(len(list)))
     print("Names of Documents Retrived for Query : ", end=" ")
-    fin_list=[]
+
     for k in range(0,len(list)):
         if (k <10):
             url2 = "cranfield000"+str(list[k])
@@ -120,7 +120,7 @@ for j in queries:
         if(k==len(list)-1):
             print(url2, end=" ")
             break
-        print(url2, end=", ")
+        print(url2 , end=" ,   ")
         
 
 
