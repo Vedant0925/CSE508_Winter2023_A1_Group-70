@@ -36,4 +36,21 @@ for p in range(0,len(documents)):
             pos_index[zero][word]["documents list"][docID] = []
         pos_index[zero][word]["Total count"] += 1
         pos_index[zero][word]["documents list"][docID].append(instance)
-print(pos_index[zero])
+        
+pos_index = pos_index[zero]
+
+print(pos_index)
+
+import pickle
+
+
+
+with open('PosInd\inverted_index.pkl', 'wb') as f:
+    pickle.dump(pos_index, f)
+
+# Load the inverted index from the file
+with open('PosInd\inverted_index.pkl', 'rb') as f:
+    loaded_index = pickle.load(f)
+
+# Print the loaded index to verify it matches the original index
+# print(loaded_index)
