@@ -1,5 +1,7 @@
 ### Q.3 (ii) 1.
 
+
+
 documents=[]
 pos_index=[{},{}]
 zero = 0
@@ -36,10 +38,10 @@ for p in range(0,len(documents)):
             pos_index[zero][word]["documents list"][docID] = []
         pos_index[zero][word]["Total count"] += 1
         pos_index[zero][word]["documents list"][docID].append(instance)
-        
+
 pos_index = pos_index[zero]
 
-print(pos_index)
+# print(pos_index)
 
 import pickle
 
@@ -54,3 +56,46 @@ with open('PosInd\inverted_index.pkl', 'rb') as f:
 
 # Print the loaded index to verify it matches the original index
 # print(loaded_index)
+
+def find_query(query):
+    # index=load_index("indexfile")
+    tok = query.split()
+    ret = [] ##doclist
+    count =0
+    docIds=[]
+    for b in tok:
+        if b in loaded_index:
+            ret.append(loaded_index[b]['documents list'])
+            # count = count+ len(loaded_index[b]['documents list'] )
+            # docId.append(list(loaded_index[b]['documents list'].keys()))
+            docIds = docIds + list(loaded_index[b]['documents list'].keys())
+            uniqueDocIds = [ x for i, x in enumerate(docIds) if x not in docIds[:i]]
+            count = len(uniqueDocIds)
+    return count ,uniqueDocIds
+
+print("Enter Number of Queries Followed By Queries")
+a = int(input())
+queries=[]
+for i in range(a):
+    queries.append(str(input()))
+
+i = 0
+for j in queries:
+    i=i+1
+    count , list=find_query(j)
+    # print(result)
+    print("Number of Documents Retrived for Query "+str(i)+": "+str(count))
+    print("Names of Documents Retrived for Query ")
+    for k in list:
+        if (k <10):
+            url2 = "cranfield000"+str(k)
+        elif (k<100):
+            url2= "cranfield00"+str(k)
+        elif (k<1000):
+            url2 = "cranfield0"+str(k)
+        elif (k<10000):
+            url2 = "cranfield"+str(k)
+        print(url2+" ")
+        
+
+
