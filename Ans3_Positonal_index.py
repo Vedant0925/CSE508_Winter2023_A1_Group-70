@@ -44,6 +44,11 @@ pos_index = pos_index[zero]
 # print(pos_index)
 
 import pickle
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+import string
+
 
 
 
@@ -57,12 +62,26 @@ with open('PosInd\inverted_index.pkl', 'rb') as f:
 # Print the loaded index to verify it matches the original index
 # print(loaded_index)
 
+def pre_process(text):
+   
+    text = text.lower()
+    tokens = word_tokenize(text)
+    stop_words = set(stopwords.words('english'))
+    tokens = [token for token in tokens if token not in stop_words]
+    tokens = [token for token in tokens if token not in string.punctuation] 
+    tokens = [token for token in tokens if token.strip()]
+    processed=""
+    for i in tokens:
+        processed=processed+" "+i
+    return processed
+
 def find_query(query):
     # index=load_index("indexfile")
     tok = query.split()
     ret = [] ##doclist
     count =0
     docIds=[]
+    uniqueDocIds = []
     for b in tok:
         if b in loaded_index:
             ret.append(loaded_index[b]['documents list'])
@@ -82,20 +101,25 @@ for i in range(a):
 i = 0
 for j in queries:
     i=i+1
-    count , list=find_query(j)
+    processed_q=pre_process(j)
+    count , list=find_query(processed_q)
     # print(result)
     print("Number of Documents Retrived for Query "+str(i)+": "+str(count))
-    print("Names of Documents Retrived for Query ")
-    for k in list:
+    print("Names of Documents Retrived for Query : ", end=" ")
+    fin_list=[]
+    for k in range(0,len(list)):
         if (k <10):
-            url2 = "cranfield000"+str(k)
+            url2 = "cranfield000"+str(list[k])
         elif (k<100):
-            url2= "cranfield00"+str(k)
+            url2= "cranfield00"+str(list[k])
         elif (k<1000):
-            url2 = "cranfield0"+str(k)
+            url2 = "cranfield0"+str(list[k])
         elif (k<10000):
-            url2 = "cranfield"+str(k)
-        print(url2+" ")
+            url2 = "cranfield"+str(list[k])
+        if(k==len(list)-1):
+            print(url2, end=" ")
+            break
+        print(url2, end=", ")
         
 
 
