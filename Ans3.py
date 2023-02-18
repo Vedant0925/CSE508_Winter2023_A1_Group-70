@@ -55,7 +55,7 @@ def load_index(file_name):
 
 def find_query_iv(query):
   
-    index=load_index("indexfile")
+    index=load_index("b_indexfile.pkl")
 
     query_bigrams = [query[i:i+2] for i in range(len(query)-1)]
     doc_sets = []
@@ -80,6 +80,8 @@ for j in queries:
     processed_q=pre_process(j)
 
     result=find_query_iv(processed_q)
+    print("Number of Documents Retrived for Query using bigram inverted index"+str(i)+":"+str(len(result)))
+    print("Names of Documents Retrived for Query using bigram inverted index"+str(i)+":"+str(result))
 
     list=find_query_pos(processed_q)
     print("Number of Documents Retrived for Query using Positional Index "+str(i)+": "+str(len(list)))
@@ -98,7 +100,6 @@ for j in queries:
             print(url2, end=" ")
             break
         print(url2 , end=" ,   ")
-    print("Number of Documents Retrived for Query "+str(i)+":"+str(len(result)))
-    print("Names of Documents Retrived for Query "+str(i)+":"+str(result))
+    
     print("\n")
         
