@@ -7,9 +7,12 @@ nltk.download('stopwords')
 from nltk.corpus import stopwords
 
 and_op = ''
+
 or_op = ''
+
 not_op = ''
-path = '/Users/vedant/Downloads/Work'  # replace with your folder name
+
+path = '/Users/vedant/Downloads/Work'
 index = {}
 stop_words = set(stopwords.words('english'))
 
@@ -26,6 +29,7 @@ for file_name in os.listdir(path):
 
 num_queries = int(input("Enter number of queries: "))
 queries = []
+
 for i in range(num_queries):
     query = input(f"Enter query {i+1}: ")
     operations = input("Enter operations (separated by commas): ")
@@ -35,6 +39,7 @@ for query, operations in queries:
     op_list = operations.split(',')
     documents = set()
     output_query = ""
+    not_op = False  
     for i, word in enumerate(query.split()):
         if word.lower() in stop_words or word in string.punctuation:
             continue
@@ -42,6 +47,23 @@ for query, operations in queries:
             if not documents:
                 documents = set(path)
             not_op = True
+            continue  
+        if not_op:
+            not_op = False
+            output_query += "NOT "
+            
+            if operator == "AND":
+                documents = documents.intersection(index[word])
+                
+            elif operator == "OR":
+                documents = documents.union(index[word])
+                
+            elif operator == "AND NOT":
+                documents = documents.difference(index[word])
+                
+            elif operator == "OR NOT":
+                documents = documents.union(set(path).difference(index[word]))
+                
         elif word in op_list:
             operator = word
             output_query += f" {operator} "
@@ -49,30 +71,40 @@ for query, operations in queries:
             not_op = False
             output_query += "NOT "
             if operator == "AND":
-                documents = documents.intersection(index[word])
+                documents = documents.intersection(index[word.lower()])
+                
             elif operator == "OR":
-                documents = documents.union(index[word])
+                documents = documents.union(index[word.lower()])
+                
             elif operator == "AND NOT":
-                documents = documents.difference(index[word])
+                documents = documents.difference(index[word.lower()])
+                
             elif operator == "OR NOT":
-                documents = documents.union(set(path).difference(index[word]))
-        elif word in index:
+                documents = documents.union(set(path).difference(index[word.lower()]))
+                
+        elif word.lower() in index:
             if not documents:
-                documents = index[word]
+                documents = index[word.lower()]
                 output_query += word
+                
             elif operator == "AND":
-                documents = documents.intersection(index[word])
+                documents = documents.intersection(index[word.lower()])
                 output_query += f" {operator} {word}"
+                
             elif operator == "OR":
-                documents = documents.union(index[word])
+                documents = documents.union(index[word.lower()])
                 output_query += f" {operator} {word}"
+                
             elif operator == "AND NOT":
-                documents = documents.difference(index[word])
+                documents = documents.difference(index[word.lower()])
                 output_query += f" {operator} {word}"
+                
             elif operator == "OR NOT":
-                documents = documents.union(set(path).difference(index[word]))
+                documents = documents.union(set(path).difference(index[word.lower()]))
                 output_query += f" {operator} {word}"
-    print(f'Query: {output_query}')
+    
     print(f'Number of documents retrieved: {len(documents)}')
+    
     print(f'Names of docs retrieved: {documents}')
+    
     print(f'Number of comparisons required: {len(query.split()) - query.count("NOT") - len(op_list)}\n')
