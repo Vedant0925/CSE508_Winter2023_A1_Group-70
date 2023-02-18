@@ -50,11 +50,11 @@ import numpy as np
 
 ### Saving and loading index
 
-with open('PosInd\Positional_index.pkl', 'wb') as f:
+with open('Positional_index.pkl', 'wb') as f:
     pickle.dump(pos_index, f)
 
 # Load the inverted index from the file
-with open('PosInd\Positional_index.pkl', 'rb') as f:
+with open('Positional_index.pkl', 'rb') as f:
     loaded_index = pickle.load(f)
 
 
