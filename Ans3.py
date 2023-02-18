@@ -82,6 +82,7 @@ for j in queries:
     result=find_query_iv(processed_q)
     print("Number of Documents Retrived for Query using bigram inverted index"+str(i)+":"+str(len(result)))
     print("Names of Documents Retrived for Query using bigram inverted index"+str(i)+":"+str(result))
+    print("\n")
 
     list=find_query_pos(processed_q)
     print("Number of Documents Retrived for Query using Positional Index "+str(i)+": "+str(len(list)))
