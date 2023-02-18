@@ -74,13 +74,12 @@ def pre_process(text):
 
 def find_query(query): 
     words = query.split()
-    uniqueDocIds = []
     doc_list=[]
     
     doc_list = []
-    for i in range(len(query.split()) - 1): ## taking the combinations of the phrase as 2 words
-        word1 = query.split()[i]
-        word2 = query.split()[i+1]
+    for i in range(len(words) - 1): ## taking the combinations of the phrase as 2 words
+        word1 = words[i]
+        word2 = words[i+1]
         if word1 in loaded_index and word2 in loaded_index:  ## checking if both words in index 
             for docID in loaded_index[word1]["documents list"]:
                 if docID in loaded_index[word2]["documents list"]: ## Checking if both words are present in same document 
@@ -89,7 +88,6 @@ def find_query(query):
                             if instance2 == instance1 + 1: ## Checking if both words are consecutive and together or not
                                 doc_list.append(docID) 
     doc_list = np.unique(doc_list)
-    doc_list =doc_list
                                 
     return doc_list
 
