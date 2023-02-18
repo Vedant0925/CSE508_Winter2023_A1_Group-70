@@ -21,6 +21,8 @@ def load_inverted_index(file_path):
     with open(file_path, 'rb') as f:
         inverted_index = pickle.load(f)
     return inverted_index
+
+
 inverted_index=load_inverted_index(file_path)
 num_queries = int(input("Enter number of queries: "))
 queries = []
