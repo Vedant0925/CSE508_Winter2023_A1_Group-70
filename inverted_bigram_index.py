@@ -47,7 +47,7 @@ def create_index(directory):
 
 def find_query(query):
   
-    index=load_index("indexfile")
+    index=load_index("b_indexfile.pkl")
 
     query_bigrams = [query[i:i+2] for i in range(len(query)-1)]
     doc_sets = []
@@ -65,9 +65,9 @@ def find_query(query):
 if __name__ == '__main__':
     import nltk
     nltk.download('stopwords')
-    path ="Work"
-    index=create_index(path)
-    save_index(index,"indexfile")
+    #path ="Work"
+    #index=create_index(path)
+    #save_index(index,"b_indexfile.pkl")
     print("Enter Number of Queries Followed By Queries")
     a = int(input())
     queries=[]
