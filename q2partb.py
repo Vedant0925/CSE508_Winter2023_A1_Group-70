@@ -31,39 +31,40 @@ num_queries = int(input("Enter number of queries: "))
 queries = []
 
 for i in range(num_queries):
-    query = input(f"Enter query {i+1}: ")
+    query = input(f"Enter query {i + 1}: ")
     operations = input("Enter operations (separated by commas): ")
     queries.append((query, operations))
 
-for query, operations in queries:
+for i, (query, operations) in enumerate(queries):
+
     op_list = operations.split(',')
     documents = set()
     output_query = ""
-    not_op = False  
-    for i, word in enumerate(query.split()):
+    not_op = False
+    for j, word in enumerate(query.split()):
         if word.lower() in stop_words or word in string.punctuation:
             continue
-        if word == "NOT" and i < len(query.split()) - 1:
+        if word == "NOT" and j < len(query.split()) - 1:
             if not documents:
                 documents = set(path)
             not_op = True
-            continue  
+            continue
         if not_op:
             not_op = False
             output_query += "NOT "
-            
+
             if operator == "AND":
                 documents = documents.intersection(index[word])
-                
+
             elif operator == "OR":
                 documents = documents.union(index[word])
-                
+
             elif operator == "AND NOT":
                 documents = documents.difference(index[word])
-                
+
             elif operator == "OR NOT":
                 documents = documents.union(set(path).difference(index[word]))
-                
+
         elif word in op_list:
             operator = word
             output_query += f" {operator} "
@@ -72,39 +73,40 @@ for query, operations in queries:
             output_query += "NOT "
             if operator == "AND":
                 documents = documents.intersection(index[word.lower()])
-                
+
             elif operator == "OR":
                 documents = documents.union(index[word.lower()])
-                
+
             elif operator == "AND NOT":
                 documents = documents.difference(index[word.lower()])
-                
+
             elif operator == "OR NOT":
                 documents = documents.union(set(path).difference(index[word.lower()]))
-                
+
         elif word.lower() in index:
             if not documents:
                 documents = index[word.lower()]
                 output_query += word
-                
+
             elif operator == "AND":
                 documents = documents.intersection(index[word.lower()])
                 output_query += f" {operator} {word}"
-                
+
             elif operator == "OR":
                 documents = documents.union(index[word.lower()])
                 output_query += f" {operator} {word}"
-                
+
             elif operator == "AND NOT":
                 documents = documents.difference(index[word.lower()])
                 output_query += f" {operator} {word}"
-                
+
             elif operator == "OR NOT":
                 documents = documents.union(set(path).difference(index[word.lower()]))
                 output_query += f" {operator} {word}"
+
+
+    print(f'Number of documents retrieved for query {i + 1}: {len(documents)}')
     
-    print(f'Number of documents retrieved: {len(documents)}')
+    print(f'Names of the documents retrieved for query {i + 1}: {", ".join(list(documents))}')
     
-    print(f'Names of docs retrieved: {documents}')
-    
-    print(f'Number of comparisons required: {len(query.split()) - query.count("NOT") - len(op_list)}\n')
+    print(f'Number of comparisons required for query {i + 1}: {len(query.split()) - query.count("NOT") - len(op_list)}\n')
